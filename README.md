@@ -43,9 +43,14 @@ Or if the `doc` attribute is set you can call this function without argument:
 ```javascript
 let _id = this.$.collate.getId();
 ```
+
+The key can be decoded using the `fromKey(_id)` function. It will return
+an array of values encoded in the keys. Order of elements in the array is the
+same as an order in the `sort` array during encoding.
+
 Finally event based API allows to put a single element in the document and
 communicate with it using HTML events. `<app-pouchdb-collate>` will handle
-the `app-pouchdb-collate` event and in result set the `_id` propery to the
+the `app-pouchdb-collate-index` event and in result set the `_id` propery to the
 event's details object. The event is required to contain a `sort` and `doc`
 properties on the event's detail object. If it's not present then the element
 will try to use values defined in the element's attributes. If they are not
@@ -54,7 +59,7 @@ set then it will return `null` `_id`'s value.
 ### Event based example
 Somewhere in the document:
 ```javascript
-let event = this.$.fire('app-pouchdb-collate', {
+let event = this.$.fire('app-pouchdb-collate-index', {
   'doc': this.doc,
   'sort': ['age', 'male', 'lastName', 'firstName']
 });
@@ -66,7 +71,7 @@ the object in the event may not cause the change listeners to go off.
 
 Pure JavaScript example of above:
 ```javascript
-var event = new CustomEvent('app-pouchdb-collate', {
+var event = new CustomEvent('app-pouchdb-collate-index', {
   detail: {
     'doc': this.doc,
     'sort': ['age', 'male', 'lastName', 'firstName']
@@ -76,4 +81,15 @@ document.dispatchEvent(event);
 assert.isString(event.detail._id);
 ```
 
+To decode key fire an `app-pouchdb-collate-decode` event with the `_id`
+property in it's detail object. As a result the `detail` object will contain
+`result` property with the array of values.
+
 The event handled by the element will be canceled and prevented from bubbling.
+
+### Empty values
+If the key for `sort` array is not present in the `doc` object it will be
+transformed into `null` but never dropped. In this case PouchDB will treat it
+as an empty value. Query like `lastName $exists true` will omit the value
+if `lastName` was no set.
+
