@@ -1,6 +1,6 @@
 {
   "name": "app-pouchdb-collate",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "license": "LICENSE.md",
   "description": "A component that support a pouchdb-collate plugin",
   "devDependencies": {
